@@ -1,0 +1,141 @@
+type AI {
+  bucket: String
+  key: String
+  bot: String
+  text: String
+  language: String
+  voice: String
+  response: AI_response
+}
+
+type AI_response {
+  """default field"""
+  empty: String
+}
+
+type Conversation {
+  id: String!
+  name: String!
+  createdAt: String
+  messages: [Message]
+  associated: ConvoLink
+}
+
+input ConversationInput {
+  id: String!
+  name: String!
+  createdAt: String
+  messages: [MessageInput]
+  associated: ConvoLinkInput
+}
+
+type ConvoLink {
+  id: String!
+  name: String
+  status: String
+  convoLinkUserId: String
+  user: User
+  conversation: Conversation
+}
+
+input ConvoLinkInput {
+  id: String!
+  name: String
+  status: String
+  convoLinkUserId: String
+  user: UserInput
+  conversation: ConversationInput
+}
+
+type createConvo {
+  """default field"""
+  empty: String
+}
+
+type createConvoLink {
+  """default field"""
+  empty: String
+}
+
+type Message {
+  id: String!
+  content: String
+  createdAt: String
+  owner: String
+  chatbot: Boolean
+  isSent: Boolean
+  file: S3Object
+  messageConversationId: String
+  conversation: Conversation
+}
+
+input MessageInput {
+  id: String!
+  content: String
+  createdAt: String
+  owner: String
+  chatbot: Boolean
+  isSent: Boolean
+  file: S3ObjectInput
+  messageConversationId: String
+  conversation: ConversationInput
+}
+
+type Mutation {
+  createConvo(body: ConversationInput!): createConvo
+  createMessage(body: MessageInput!): Message
+
+  """This can only be done by the logged in user."""
+  registerUser(body: UserInput!): registerUser
+  createConvoLink(body: ConvoLinkInput!): createConvoLink
+  updateConvoLink(body: ConvoLinkInput!): updateConvoLink
+}
+
+type Query {
+  """Returns a single conversation"""
+  getConvo(body: ConversationInput!): Conversation
+  getUser(body: UserInput): User
+  detectCelebs(bucket: String!, key: String!): AI
+  detectLabels(bucket: String!, key: String!): AI
+  detectLanguage(text: String!): AI
+  detectEntities(language: String!, text: String!): AI
+  detectSentiment(bucket: String!, key: String!, voice: String!, text: String!): AI
+  translate(language: String!, text: String!): AI
+}
+
+type registerUser {
+  """default field"""
+  empty: String
+}
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+}
+
+input S3ObjectInput {
+  bucket: String!
+  region: String!
+  key: String!
+}
+
+type updateConvoLink {
+  """default field"""
+  empty: String
+}
+
+type User {
+  id: String!
+  username: String!
+  registered: Boolean
+  userConversations: [Conversation]
+}
+
+input UserInput {
+  id: String!
+  username: String!
+  registered: Boolean
+  userConversations: [ConversationInput]
+}
+

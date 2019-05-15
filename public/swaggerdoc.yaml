@@ -1,0 +1,601 @@
+---
+swagger: '2.0'
+info:
+  description: 'created for graphql generation'
+  version: 1.0.0
+  title: Test Doc
+tags:
+- name: conversation
+  description: Everything about your Conversations
+- name: message
+  description: Access to Messages
+- name: user
+  description: Operations about user
+- name: ai
+  description: Operations about AI
+schemes:
+- http
+paths:
+  "/conversation":
+    post:
+      tags:
+      - conversation
+      summary: Add a new conversation
+      description: ''
+      operationId: createConvo
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Conversation object that needs to be added to the store
+        required: true
+        schema:
+          "$ref": "#/definitions/Conversation"
+      responses:
+        '405':
+          description: Invalid input
+      security:
+      - user_auth:
+        - write:messages
+        - write:messages
+    get:
+      tags:
+      - conversation
+      summary: Find conversation
+      description: Returns a single conversation
+      operationId: getConvo
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: conversation filter param to return
+        required: true
+        schema:
+          "$ref": "#/definitions/Conversation"
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/Conversation"
+        '404':
+          description: Conversation not found
+      security:
+      - api_key: []
+  "/message":
+    post:
+      tags:
+      - message
+      summary: Create a message
+      description: ''
+      operationId: createMessage
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: create message using the param provided
+        required: true
+        schema:
+          "$ref": "#/definitions/Message"
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/Message"
+        '400':
+          description: Invalid Message
+  "/user":
+    post:
+      tags:
+      - user
+      summary: Register user
+      description: Register user.
+      operationId: registerUser
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Created user object
+        required: true
+        schema:
+          "$ref": "#/definitions/User"
+      responses:
+        default:
+          description: successful operation
+    get:
+      tags:
+      - user
+      summary: Get user
+      description: ''
+      operationId: getUser
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: user object
+        schema:
+          "$ref": "#/definitions/User"
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/User"
+        '400':
+          description: Invalid user info supplied
+        '404':
+          description: User not found
+  "/createConvoLink":
+    post:
+      tags:
+      - convoLink
+      summary: Add a new convoLink
+      description: ''
+      operationId: createConvoLink
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: ConvoLink object that needs to be added
+        required: true
+        schema:
+          "$ref": "#/definitions/ConvoLink"
+      responses:
+        '405':
+          description: Invalid input
+      security:
+      - user_auth:
+        - write:messages
+        - read:messages
+    put:
+      tags:
+      - convoLink
+      summary: Update an existing convoLink
+      description: ''
+      operationId: updateConvoLink
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: ConvoLink object that needs to be added to the store
+        required: true
+        schema:
+          "$ref": "#/definitions/ConvoLink"
+      responses:
+        '404':
+          description: ConvoLink not found
+        '405':
+          description: Validation exception
+      security:
+      - user_auth:
+        - write:messages
+        - read:messages
+  "/detectCelebs/{bucket}/{key}":
+    get:
+      tags:
+      - ai
+      summary: Detect Celebs
+      description: ''
+      operationId: detectCelebs
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: bucket
+        in: path
+        description: bucket
+        required: true
+        type: string
+      - name: key
+        in: path
+        description: key
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/detectLabels/{bucket}/{key}":
+    get:
+      tags:
+      - ai
+      summary: Detect Labels
+      description: ''
+      operationId: detectLabels
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: bucket
+        in: path
+        description: bucket
+        required: true
+        type: string
+      - name: key
+        in: path
+        description: key
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/detectLanguage/{text}":
+    get:
+      tags:
+      - ai
+      summary: Detect Language
+      description: ''
+      operationId: detectLanguage
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/detectEntities/{language}/{text}":
+    get:
+      tags:
+      - ai
+      summary: Detect Entities
+      description: ''
+      operationId: detectEntities
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: language
+        in: path
+        description: language
+        required: true
+        type: string
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/detectSentiment/{language}/{text}":
+    get:
+      tags:
+      - ai
+      summary: Detect Sentiment
+      description: ''
+      operationId: detectSentiment
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: language
+        in: path
+        description: language
+        required: true
+        type: string
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/invokeBot/{bot}/{text}":
+    get:
+      tags:
+      - ai
+      summary: Detect Sentiment
+      description: ''
+      operationId: detectSentiment
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: bot
+        in: path
+        description: bot
+        required: true
+        type: string
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/dictate/{bucket}/{key}/{voice}/{text}":
+    get:
+      tags:
+      - ai
+      summary: Detect Sentiment
+      description: ''
+      operationId: detectSentiment
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: bucket
+        in: path
+        description: bucket
+        required: true
+        type: string
+      - name: key
+        in: path
+        description: key
+        required: true
+        type: string
+      - name: voice
+        in: path
+        description: voice
+        required: true
+        type: string
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+  "/translate/{language}/{text}":
+    get:
+      tags:
+      - ai
+      summary: Translate
+      description: ''
+      operationId: translate
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: language
+        in: path
+        description: language
+        required: true
+        type: string
+      - name: text
+        in: path
+        description: text
+        required: true
+        type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/AI"
+        '400':
+          description: Invalid bucket or key is supplied
+        '404':
+          description: AI not found
+securityDefinitions:
+  user_auth:
+    type: oauth2
+    authorizationUrl: http://user.auth.io
+    flow: implicit
+    scopes:
+      write:messages: create/modify messages in your account
+      read:messages: read your messages
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+parameters:
+  username:
+    name: username
+    in: path
+    description: 'The name that needs to be fetched. Use user1 for testing.'
+    required: true
+    type: string
+definitions:
+  AI:
+    type: object
+    properties:
+      bucket:
+        type: string
+      key:
+        type: string
+      bot:
+        type: string
+      text:
+        type: string
+      language:
+        type: string
+      voice:
+        type: string
+      response:
+        type: object
+    xml:
+      name: AI
+  User:
+    type: object
+    required:
+    - id
+    - username
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      registered:
+        type: boolean
+      userConversations:
+        type: array
+        xml:
+          name: conversation
+          wrapped: true
+        items:
+          "$ref": "#/definitions/Conversation"
+    xml:
+      name: User
+  ConvoLink:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      status:
+        type: string
+      convoLinkUserId:
+        type: integer
+        format: int64
+      user:
+        "$ref": "#/definitions/User"
+      conversation:
+        "$ref": "#/definitions/Conversation"
+    xml:
+      name: Tag
+  S3Object:
+    type: object
+    required:
+    - bucket
+    - region
+    - key
+    properties:
+      bucket:
+        type: string
+      region:
+        type: string
+      key:
+        type: string
+    xml:
+      name: S3Object
+  Conversation:
+    type: object
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: conversation between craig and me
+      createdAt:
+        type: string
+        example: 2019-5-12
+      messages:
+        type: array
+        xml:
+          name: message
+          wrapped: true
+        items:
+          "$ref": "#/definitions/Message"
+      associated:
+        "$ref": "#/definitions/ConvoLink"
+    xml:
+      name: Conversation
+  Message:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: integer
+        format: int64
+      content:
+        type: string
+        example: hello
+      createdAt:
+        type: string
+        example: 2019-5-12
+      owner:
+        type: string
+        example: eugen-steffen
+      chatbot:
+        type: boolean
+      isSent: 
+        type: boolean
+      file: 
+        "$ref": "#/definitions/S3Object"
+      messageConversationId: 
+        type: integer
+        format: int64
+      conversation: 
+        "$ref": "#/definitions/Conversation"
+    xml:
+      name: Pet
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string

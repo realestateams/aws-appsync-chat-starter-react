@@ -261,3 +261,22 @@ amplify delete
 ```
 
 to delete the resources created by the Amplify CLI.
+
+## How to use Swagger to graphql
+
+1. Go to project root folder
+
+2. run below command
+
+```
+npm i -g swagger-to-graphql
+swagger-to-graphql --swagger=./public/swaggerdoc.yaml > ./schema.graphql
+```
+It will generate graphql schema from swagger documentation.
+
+3. Do deployment using `amplify push`
+
+## Redoc
+
+Endpoint for documentation is added at `/doc`.
+It is generated from `public/swaggerdoc.yaml` file.
