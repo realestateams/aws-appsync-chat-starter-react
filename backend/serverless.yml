@@ -1,4 +1,4 @@
-service: ChatQL-appsync-backend
+service: chatql-apsync-backend
 
 provider:
   name: aws
@@ -10,49 +10,47 @@ package:
 
 plugins:
   - serverless-appsync-plugin
-  - serverless-s3-sync
+  # - serverless-s3-sync
   - "@anttiviljami/serverless-stack-output"
 
 functions:
-  ChatQLAIProxy:
+  chatqlAiProxy:
     handler: ai-lambda/index.handler
     role: awsAppSyncServiceRole
     timeout: 10
     memorySize: 1024
     description: ""
-  MovieBot:
-    handler: moviebot-lambda/index.handler
-    role: awsAppSyncServiceRole
-    timeout: 3
-    memorySize: 128
-    description: ""
-  ChuckBot:
-    handler: chuckbot-lambda/index.lambda_handler
-    role: awsAppSyncServiceRole
-    timeout: 3
-    memorySize: 128
-    description: ""
+  # MovieBot:
+  #   handler: moviebot-lambda/index.handler
+  #   timeout: 3
+  #   memorySize: 128
+  #   description: ""
+  # ChuckBot:
+  #   handler: chuckbot-lambda/index.lambda_handler
+  #   timeout: 3
+  #   memorySize: 128
+  #   description: ""
 resources:
   Resources:
     AssetsBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: chatQL-frontend
-    lambdaAccessPolicy:
-      Type: "AWS::IAM::Policy"
-      Properties:
-        PolicyName: "lambda-access"
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: "Allow"
-              Action: "lambda:InvokeFunction"
-              Resource:
-                - {"Fn::GetAtt": ["ChatQLAIProxyLambdaFunction", "Arn"]}
-        Roles:
-          -
-            Ref: "awsAppSyncServiceRole"
+        BucketName: chatql-frontend
+    # lambdaAccessPolicy:
+    #   Type: "AWS::IAM::Policy"
+    #   Properties:
+    #     PolicyName: "lambda-access"
+    #     PolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         -
+    #           Effect: "Allow"
+    #           Action: "lambda:InvokeFunction"
+    #           Resource:
+    #             - {"Fn::GetAtt": ["chatqlAiProxyLambdaFunction", "Arn"]}
+    #     Roles:
+    #       -
+    #         Ref: "awsAppSyncServiceRole"
     awsAppSyncServiceRole:
       Type: AWS::IAM::Role
       Properties:
@@ -87,7 +85,7 @@ resources:
 custom:
   accountId: { Ref: AWS::AccountId }
   s3Sync:
-    - bucketName: chatQL-frontend
+    - bucketName: chatql-frontend
       localDir: ../build
   appSync:
     name: appsync-serverless
@@ -103,7 +101,7 @@ custom:
         config:
           lambdaFunctionArn:
             Fn::GetAtt:
-              - ChatQLAIProxyLambdaFunction
+              - ChatqlAiProxyLambdaFunction
               - Arn
     mappingTemplates:
       - dataSource: AIproxyLambda

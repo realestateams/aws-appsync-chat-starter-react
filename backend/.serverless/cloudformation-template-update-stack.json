@@ -16,22 +16,22 @@
         }
       }
     },
-    "ChatQLAIProxyLogGroup": {
+    "ChatqlAiProxyLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/ChatQL-appsync-backend-dev-ChatQLAIProxy"
+        "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy"
       }
     },
-    "ChatQLAIProxyLambdaFunction": {
+    "ChatqlAiProxyLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/ChatQL-appsync-backend/dev/1558494711881-2019-05-22T03:11:51.881Z/ChatQL-appsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1558519932495-2019-05-22T10:12:12.495Z/chatql-apsync-backend.zip"
         },
-        "FunctionName": "ChatQL-appsync-backend-dev-ChatQLAIProxy",
+        "FunctionName": "chatql-apsync-backend-dev-chatqlAiProxy",
         "Handler": "ai-lambda/index.handler",
         "MemorySize": 1024,
         "Role": {
@@ -44,46 +44,24 @@
         "Timeout": 10
       },
       "DependsOn": [
-        "ChatQLAIProxyLogGroup",
+        "ChatqlAiProxyLogGroup",
         "awsAppSyncServiceRole"
       ]
     },
-    "ChatQLAIProxyLambdaVersionqpiTWct4Wl9qjas8kby4CipjH5OJhedlq7w4qPY4s": {
+    "ChatqlAiProxyLambdaVersioncZr5jYH6qTJdg9n5U1XZBB0ajk5lb5BZhe3bsOsTQFA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "ChatQLAIProxyLambdaFunction"
+          "Ref": "ChatqlAiProxyLambdaFunction"
         },
-        "CodeSha256": "yHjCsUzHa9Hd64QAJUaQWTiv8/bRLPWz8z39dr50qks="
+        "CodeSha256": "ZtZFfXITFFsR5amdUZ5Qc2ks0j8r+VyZLN8RrA8XjQU="
       }
     },
-    "lambdaAccessPolicy": {
-      "Type": "AWS::IAM::Policy",
+    "AssetsBucket": {
+      "Type": "AWS::S3::Bucket",
       "Properties": {
-        "PolicyName": "lambda-access",
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": "lambda:InvokeFunction",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ChatQLAIProxyLambdaFunction",
-                    "Arn"
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        "Roles": [
-          {
-            "Ref": "awsAppSyncServiceRole"
-          }
-        ]
+        "BucketName": "chatql-frontend"
       }
     },
     "awsAppSyncServiceRole": {
@@ -106,7 +84,11 @@
           ]
         },
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+          "arn:aws:iam::aws:policy/AmazonRekognitionReadOnlyAccess",
+          "arn:aws:iam::aws:policy/AmazonPollyReadOnlyAccess",
+          "arn:aws:iam::aws:policy/ComprehendReadOnly",
+          "arn:aws:iam::aws:policy/AmazonLexRunBotsOnly",
+          "arn:aws:iam::aws:policy/TranslateReadOnly"
         ],
         "Policies": [
           {
@@ -181,7 +163,7 @@
                   "Resource": [
                     {
                       "Fn::GetAtt": [
-                        "ChatQLAIProxyLambdaFunction",
+                        "ChatqlAiProxyLambdaFunction",
                         "Arn"
                       ]
                     },
@@ -191,7 +173,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "ChatQLAIProxyLambdaFunction",
+                              "ChatqlAiProxyLambdaFunction",
                               "Arn"
                             ]
                           },
@@ -228,7 +210,7 @@
         "LambdaConfig": {
           "LambdaFunctionArn": {
             "Fn::GetAtt": [
-              "ChatQLAIProxyLambdaFunction",
+              "ChatqlAiProxyLambdaFunction",
               "Arn"
             ]
           }
@@ -396,10 +378,10 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
-    "ChatQLAIProxyLambdaFunctionQualifiedArn": {
+    "ChatqlAiProxyLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChatQLAIProxyLambdaVersionqpiTWct4Wl9qjas8kby4CipjH5OJhedlq7w4qPY4s"
+        "Ref": "ChatqlAiProxyLambdaVersioncZr5jYH6qTJdg9n5U1XZBB0ajk5lb5BZhe3bsOsTQFA"
       }
     },
     "GraphQlApiUrl": {
