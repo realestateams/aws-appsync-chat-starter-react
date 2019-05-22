@@ -1,0 +1,650 @@
+{
+  "service": {
+    "service": "ChatQL-appsync-backend",
+    "serviceObject": {
+      "name": "ChatQL-appsync-backend"
+    },
+    "provider": {
+      "stage": "dev",
+      "region": "eu-west-2",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
+      "name": "aws",
+      "runtime": "nodejs8.10",
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ChatQLAIProxyLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/ChatQL-appsync-backend-dev-ChatQLAIProxy"
+            }
+          },
+          "ChatQLAIProxyLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ChatQL-appsync-backend/dev/1558494711881-2019-05-22T03:11:51.881Z/ChatQL-appsync-backend.zip"
+              },
+              "FunctionName": "ChatQL-appsync-backend-dev-ChatQLAIProxy",
+              "Handler": "ai-lambda/index.handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "awsAppSyncServiceRole",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 10
+            },
+            "DependsOn": [
+              "ChatQLAIProxyLogGroup",
+              "awsAppSyncServiceRole"
+            ]
+          },
+          "ChatQLAIProxyLambdaVersionqpiTWct4Wl9qjas8kby4CipjH5OJhedlq7w4qPY4s": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ChatQLAIProxyLambdaFunction"
+              },
+              "CodeSha256": "yHjCsUzHa9Hd64QAJUaQWTiv8/bRLPWz8z39dr50qks="
+            }
+          },
+          "lambdaAccessPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+              "PolicyName": "lambda-access",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": "lambda:InvokeFunction",
+                    "Resource": [
+                      {
+                        "Fn::GetAtt": [
+                          "ChatQLAIProxyLambdaFunction",
+                          "Arn"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "Roles": [
+                {
+                  "Ref": "awsAppSyncServiceRole"
+                }
+              ]
+            }
+          },
+          "awsAppSyncServiceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+              ],
+              "Policies": [
+                {
+                  "PolicyName": "lambdaBasicExecution",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogGroup",
+                          "logs:CreateLogStream",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": "arn:aws:logs:*:*:*"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GraphQlApi": {
+            "Type": "AWS::AppSync::GraphQLApi",
+            "Properties": {
+              "Name": "appsync-serverless",
+              "AuthenticationType": "AWS_IAM"
+            }
+          },
+          "GraphQlSchema": {
+            "Type": "AWS::AppSync::GraphQLSchema",
+            "Properties": {
+              "Definition": "type AI {\n  bucket: String\n  key: String\n  bot: String\n  text: String\n  language: String\n  voice: String\n  response: AI_response\n}\n\ntype AI_response {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype Conversation {\n  id: String!\n  name: String!\n  createdAt: String\n  messages: [Message]\n  associated: ConvoLink\n}\n\ninput ConversationInput {\n  id: String!\n  name: String!\n  createdAt: String\n  messages: [MessageInput]\n  associated: ConvoLinkInput\n}\n\ntype ConvoLink {\n  id: String!\n  name: String\n  status: String\n  convoLinkUserId: String\n  user: User\n  conversation: Conversation\n}\n\ninput ConvoLinkInput {\n  id: String!\n  name: String\n  status: String\n  convoLinkUserId: String\n  user: UserInput\n  conversation: ConversationInput\n}\n\ntype createConvo {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype createConvoLink {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype Message {\n  id: String!\n  content: String\n  createdAt: String\n  owner: String\n  chatbot: Boolean\n  isSent: Boolean\n  file: S3Object\n  messageConversationId: String\n  conversation: Conversation\n}\n\ninput MessageInput {\n  id: String!\n  content: String\n  createdAt: String\n  owner: String\n  chatbot: Boolean\n  isSent: Boolean\n  file: S3ObjectInput\n  messageConversationId: String\n  conversation: ConversationInput\n}\n\ntype Mutation {\n  createConvo(body: ConversationInput!): createConvo\n  createMessage(body: MessageInput!): Message\n\n  \"\"\"This can only be done by the logged in user.\"\"\"\n  registerUser(body: UserInput!): registerUser\n  createConvoLink(body: ConvoLinkInput!): createConvoLink\n  updateConvoLink(body: ConvoLinkInput!): updateConvoLink\n}\n\ntype Query {\n  \"\"\"Returns a single conversation\"\"\"\n  getConvo(body: ConversationInput!): Conversation\n  getUser(body: UserInput): User\n  detectCelebs(bucket: String!, key: String!): AI\n  detectLabels(bucket: String!, key: String!): AI\n  detectLanguage(text: String!): AI\n  detectEntities(language: String!, text: String!): AI\n  detectSentiment(bucket: String!, key: String!, voice: String!, text: String!): AI\n  translate(language: String!, text: String!): AI\n}\n\ntype registerUser {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype S3Object {\n  bucket: String!\n  region: String!\n  key: String!\n}\n\ninput S3ObjectInput {\n  bucket: String!\n  region: String!\n  key: String!\n}\n\ntype updateConvoLink {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype User {\n  id: String!\n  username: String!\n  registered: Boolean\n  userConversations: [Conversation]\n}\n\ninput UserInput {\n  id: String!\n  username: String!\n  registered: Boolean\n  userConversations: [ConversationInput]\n}\n\n",
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              }
+            }
+          },
+          "GraphQlDsAIproxyLambdaRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "GraphQlDsAIproxyLambdaPolicy",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Action": [
+                          "lambda:invokeFunction"
+                        ],
+                        "Effect": "Allow",
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "ChatQLAIProxyLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              ":",
+                              [
+                                {
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                },
+                                "*"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GraphQlDsAIproxyLambda": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "AIproxyLambda",
+              "Description": "AIproxy Lambda data source",
+              "Type": "AWS_LAMBDA",
+              "ServiceRoleArn": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambdaRole",
+                  "Arn"
+                ]
+              },
+              "LambdaConfig": {
+                "LambdaFunctionArn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                }
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectLabels": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectLabels",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"lex\",\n        \"arguments\":  {\n            \"bot\": \"$context.arguments.bot\",\n            \"sender\": \"$context.identity.sub\",\n            \"text\": \"$context.arguments.text\"\n        }\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectCelebs": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectCelebs",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"rekognition-celebs\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydictate": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "dictate",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"polly\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerytranslate": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "translate",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"translate\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectLanguage": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectLanguage",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-language\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectEntities": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectEntities",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-entities\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectSentiment": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectSentiment",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-sentiment\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ChatQLAIProxyLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ChatQLAIProxyLambdaVersionqpiTWct4Wl9qjas8kby4CipjH5OJhedlq7w4qPY4s"
+            }
+          },
+          "GraphQlApiUrl": {
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApi",
+                "GraphQLUrl"
+              ]
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "accountId": {
+        "Ref": "AWS::AccountId"
+      },
+      "siteName": "awsappsyncchatstarte-20190514032224-hostingbucket-dev",
+      "s3Origin": "dev-origin",
+      "hostedZoneId": "Z2FDTNDATAQYW2",
+      "s3Sync": [
+        {
+          "bucketName": "awsappsyncchatstarte-20190514032224-hostingbucket-dev",
+          "localDir": "../build"
+        }
+      ],
+      "appSync": {
+        "name": "appsync-serverless",
+        "authenticationType": "AWS_IAM",
+        "schema": "swagger_gen_schema.graphql",
+        "dataSources": [
+          {
+            "type": "AWS_LAMBDA",
+            "name": "AIproxyLambda",
+            "description": "AIproxy Lambda data source",
+            "config": {
+              "lambdaFunctionArn": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+              }
+            }
+          }
+        ],
+        "mappingTemplates": [
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLabels",
+            "request": "detectLabels-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectCelebs",
+            "request": "detectCelebs-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLabels",
+            "request": "invokeBot-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "dictate",
+            "request": "dictate-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "translate",
+            "request": "translate-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLanguage",
+            "request": "detectLanguage-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectEntities",
+            "request": "detectEntities-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectSentiment",
+            "request": "detectSentiment-request.vtl",
+            "response": "common-response.vtl"
+          }
+        ]
+      },
+      "output": {
+        "handler": "scripts/output.handler",
+        "file": "serverless-output.toml"
+      },
+      "assetDynamoDBName": "elias-mwa-dynamodb"
+    },
+    "plugins": [
+      "serverless-appsync-plugin",
+      "serverless-s3-sync",
+      "@anttiviljami/serverless-stack-output"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "ChatQLAIProxy": {
+        "handler": "ai-lambda/index.handler",
+        "role": "awsAppSyncServiceRole",
+        "timeout": 10,
+        "memorySize": 1024,
+        "description": "",
+        "events": [],
+        "name": "ChatQL-appsync-backend-dev-ChatQLAIProxy",
+        "package": {},
+        "memory": 1024,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      }
+    },
+    "resources": {
+      "Resources": {
+        "lambdaAccessPolicy": {
+          "Type": "AWS::IAM::Policy",
+          "Properties": {
+            "PolicyName": "lambda-access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "lambda:InvokeFunction",
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ChatQLAIProxyLambdaFunction",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "Roles": [
+              {
+                "Ref": "awsAppSyncServiceRole"
+              }
+            ]
+          }
+        },
+        "awsAppSyncServiceRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "appsync.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+            ],
+            "Policies": [
+              {
+                "PolicyName": "lambdaBasicExecution",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": "arn:aws:logs:*:*:*"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "layers": {},
+    "artifact": "/Volumes/Work/Working/craig/aws-appsync-chat-starter-react/backend/.serverless/ChatQL-appsync-backend.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/ChatQL-appsync-backend/dev/1558494711881-2019-05-22T03:11:51.881Z",
+    "artifact": "ChatQL-appsync-backend.zip"
+  }
+}

@@ -1,0 +1,151 @@
+service: ChatQL-appsync-backend
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: 'eu-west-2'
+
+package:
+  excludeDevDependencies: true
+
+plugins:
+  - serverless-appsync-plugin
+  - serverless-s3-sync
+  - "@anttiviljami/serverless-stack-output"
+
+functions:
+  ChatQLAIProxy:
+    handler: ai-lambda/index.handler
+    role: awsAppSyncServiceRole
+    timeout: 10
+    memorySize: 1024
+    description: ""
+  MovieBot:
+    handler: moviebot-lambda/index.handler
+    role: awsAppSyncServiceRole
+    timeout: 3
+    memorySize: 128
+    description: ""
+  ChuckBot:
+    handler: chuckbot-lambda/index.lambda_handler
+    role: awsAppSyncServiceRole
+    timeout: 3
+    memorySize: 128
+    description: ""
+resources:
+  Resources:
+    AssetsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: chatQL-frontend
+    lambdaAccessPolicy:
+      Type: "AWS::IAM::Policy"
+      Properties:
+        PolicyName: "lambda-access"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Action: "lambda:InvokeFunction"
+              Resource:
+                - {"Fn::GetAtt": ["ChatQLAIProxyLambdaFunction", "Arn"]}
+        Roles:
+          -
+            Ref: "awsAppSyncServiceRole"
+    awsAppSyncServiceRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonRekognitionReadOnlyAccess
+          - arn:aws:iam::aws:policy/AmazonPollyReadOnlyAccess
+          - arn:aws:iam::aws:policy/ComprehendReadOnly
+          - arn:aws:iam::aws:policy/AmazonLexRunBotsOnly
+          - arn:aws:iam::aws:policy/TranslateReadOnly
+        Policies:
+          - PolicyName: lambdaBasicExecution
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow # note that these rights are given in the default policy and are required if you want logs out of your lambda(s)
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "arn:aws:logs:*:*:*"
+  Outputs:
+custom:
+  accountId: { Ref: AWS::AccountId }
+  s3Sync:
+    - bucketName: chatQL-frontend
+      localDir: ../build
+  appSync:
+    name: appsync-serverless
+    authenticationType: AWS_IAM
+    # userPoolConfig:
+    #   defaultAction: ALLOW
+    #   userPoolId: us-east-1_78JeU40JR
+    schema: swagger_gen_schema.graphql
+    dataSources:
+      - type: AWS_LAMBDA
+        name: AIproxyLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - ChatQLAIProxyLambdaFunction
+              - Arn
+    mappingTemplates:
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectLabels
+        request: "detectLabels-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectCelebs
+        request: "detectCelebs-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectLabels
+        request: "invokeBot-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: dictate
+        request: "dictate-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: translate
+        request: "translate-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectLanguage
+        request: "detectLanguage-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectEntities
+        request: "detectEntities-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: AIproxyLambda
+        type: Query
+        field: detectSentiment
+        request: "detectSentiment-request.vtl"
+        response: "common-response.vtl"
+  output:
+    handler: scripts/output.handler
+    file: serverless-output.toml

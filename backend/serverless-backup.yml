@@ -1,0 +1,109 @@
+      - type: AWS_LAMBDA
+        name: DetectLabelsLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DetectLabelsLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: DetectCelebsLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DetectCelebsLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: InvokeBotLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - InvokeBotLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: DictateLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DictateLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: TranslateLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - TranslateLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: DetectLanguageLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DetectLanguageLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: DetectEntitiesLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DetectEntitiesLambdaFunction
+              - Arn
+      - type: AWS_LAMBDA
+        name: DetectSentimentLambda
+        description: 'AIproxy Lambda data source'
+        config:
+          lambdaFunctionArn:
+            Fn::GetAtt:
+              - DetectSentimentLambdaFunction
+              - Arn
+
+
+
+
+              mappingTemplates:
+      - dataSource: DetectLabelsLambda
+        type: Query
+        field: detectLabels
+        request: "detectLabels-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: DetectCelebsLambda
+        type: Query
+        field: detectCelebs
+        request: "detectCelebs-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: InvokeBotLambda
+        type: Query
+        field: invokeBot
+        request: "invokeBot-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: DictateLambda
+        type: Query
+        field: dictate
+        request: "dictate-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: TranslateLambda
+        type: Query
+        field: translate
+        request: "translate-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: DetectLanguageLambda
+        type: Query
+        field: detectLanguage
+        request: "detectLanguage-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: DetectEntitiesLambda
+        type: Query
+        field: detectEntities
+        request: "detectEntities-request.vtl"
+        response: "common-response.vtl"
+      - dataSource: DetectSentimentLambda
+        type: Query
+        field: detectSentiment
+        request: "detectSentiment-request.vtl"
+        response: "common-response.vtl"
