@@ -22,6 +22,106 @@
         "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy"
       }
     },
+    "MovieBotLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-MovieBot"
+      }
+    },
+    "ChuckBotLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-ChuckBot"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "chatql-apsync-backend",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-MovieBot:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-ChuckBot:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-MovieBot:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-ChuckBot:*:*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "chatql-apsync-backend",
+              "dev",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
     "ChatqlAiProxyLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -29,7 +129,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/chatql-apsync-backend/dev/1558519932495-2019-05-22T10:12:12.495Z/chatql-apsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1558541885253-2019-05-22T16:18:05.253Z/chatql-apsync-backend.zip"
         },
         "FunctionName": "chatql-apsync-backend-dev-chatqlAiProxy",
         "Handler": "ai-lambda/index.handler",
@@ -48,20 +148,120 @@
         "awsAppSyncServiceRole"
       ]
     },
-    "ChatqlAiProxyLambdaVersioncZr5jYH6qTJdg9n5U1XZBB0ajk5lb5BZhe3bsOsTQFA": {
+    "ChatqlAiProxyLambdaVersionT2q5pIe7Qwr3gNhhrzlqmJZEuSQPiTy3HFpCxOshY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ChatqlAiProxyLambdaFunction"
         },
-        "CodeSha256": "ZtZFfXITFFsR5amdUZ5Qc2ks0j8r+VyZLN8RrA8XjQU="
+        "CodeSha256": "O/M9yZJk64JO/te9yTm2MFn4xZVVyYgyXLEKnaoR7mY="
+      }
+    },
+    "MovieBotLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/chatql-apsync-backend/dev/1558541885253-2019-05-22T16:18:05.253Z/chatql-apsync-backend.zip"
+        },
+        "FunctionName": "chatql-apsync-backend-dev-MovieBot",
+        "Handler": "moviebot-lambda/index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 3
+      },
+      "DependsOn": [
+        "MovieBotLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "MovieBotLambdaVersionnTh1SOGvBP9SNytoUKCtMcFrRHlogNAzng9T6wrBWwc": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "MovieBotLambdaFunction"
+        },
+        "CodeSha256": "O/M9yZJk64JO/te9yTm2MFn4xZVVyYgyXLEKnaoR7mY="
+      }
+    },
+    "ChuckBotLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/chatql-apsync-backend/dev/1558541885253-2019-05-22T16:18:05.253Z/chatql-apsync-backend.zip"
+        },
+        "FunctionName": "chatql-apsync-backend-dev-ChuckBot",
+        "Handler": "chuckbot-lambda/index.lambda_handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 3
+      },
+      "DependsOn": [
+        "ChuckBotLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "ChuckBotLambdaVersionEOefjykEdsKv0RSxoWrItUIxlYysWxJuQRSuUJXgfsg": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ChuckBotLambdaFunction"
+        },
+        "CodeSha256": "O/M9yZJk64JO/te9yTm2MFn4xZVVyYgyXLEKnaoR7mY="
       }
     },
     "AssetsBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "BucketName": "chatql-frontend"
+      }
+    },
+    "lambdaAccessPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-access",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "lambda:InvokeFunction",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ChatqlAiProxyLambdaFunction",
+                    "Arn"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "awsAppSyncServiceRole"
+          }
+        ]
       }
     },
     "awsAppSyncServiceRole": {
@@ -74,7 +274,8 @@
               "Effect": "Allow",
               "Principal": {
                 "Service": [
-                  "appsync.amazonaws.com"
+                  "appsync.amazonaws.com",
+                  "lambda.amazonaws.com"
                 ]
               },
               "Action": [
@@ -88,7 +289,8 @@
           "arn:aws:iam::aws:policy/AmazonPollyReadOnlyAccess",
           "arn:aws:iam::aws:policy/ComprehendReadOnly",
           "arn:aws:iam::aws:policy/AmazonLexRunBotsOnly",
-          "arn:aws:iam::aws:policy/TranslateReadOnly"
+          "arn:aws:iam::aws:policy/TranslateReadOnly",
+          "arn:aws:iam::aws:policy/AmazonS3FullAccess"
         ],
         "Policies": [
           {
@@ -261,28 +463,6 @@
         }
       }
     },
-    "GraphQlResolverQuerydictate": {
-      "Type": "AWS::AppSync::Resolver",
-      "DependsOn": "GraphQlSchema",
-      "Properties": {
-        "ApiId": {
-          "Fn::GetAtt": [
-            "GraphQlApi",
-            "ApiId"
-          ]
-        },
-        "TypeName": "Query",
-        "FieldName": "dictate",
-        "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"polly\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
-        "ResponseMappingTemplate": "$util.toJson($context.result)",
-        "DataSourceName": {
-          "Fn::GetAtt": [
-            "GraphQlDsAIproxyLambda",
-            "Name"
-          ]
-        }
-      }
-    },
     "GraphQlResolverQuerytranslate": {
       "Type": "AWS::AppSync::Resolver",
       "DependsOn": "GraphQlSchema",
@@ -381,7 +561,19 @@
     "ChatqlAiProxyLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChatqlAiProxyLambdaVersioncZr5jYH6qTJdg9n5U1XZBB0ajk5lb5BZhe3bsOsTQFA"
+        "Ref": "ChatqlAiProxyLambdaVersionT2q5pIe7Qwr3gNhhrzlqmJZEuSQPiTy3HFpCxOshY"
+      }
+    },
+    "MovieBotLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "MovieBotLambdaVersionnTh1SOGvBP9SNytoUKCtMcFrRHlogNAzng9T6wrBWwc"
+      }
+    },
+    "ChuckBotLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ChuckBotLambdaVersionEOefjykEdsKv0RSxoWrItUIxlYysWxJuQRSuUJXgfsg"
       }
     },
     "GraphQlApiUrl": {

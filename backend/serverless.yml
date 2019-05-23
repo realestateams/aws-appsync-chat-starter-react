@@ -10,7 +10,7 @@ package:
 
 plugins:
   - serverless-appsync-plugin
-  # - serverless-s3-sync
+  - serverless-s3-sync
   - "@anttiviljami/serverless-stack-output"
 
 functions:
@@ -20,37 +20,37 @@ functions:
     timeout: 10
     memorySize: 1024
     description: ""
-  # MovieBot:
-  #   handler: moviebot-lambda/index.handler
-  #   timeout: 3
-  #   memorySize: 128
-  #   description: ""
-  # ChuckBot:
-  #   handler: chuckbot-lambda/index.lambda_handler
-  #   timeout: 3
-  #   memorySize: 128
-  #   description: ""
+  MovieBot:
+    handler: moviebot-lambda/index.handler
+    timeout: 3
+    memorySize: 128
+    description: ""
+  ChuckBot:
+    handler: chuckbot-lambda/index.lambda_handler
+    timeout: 3
+    memorySize: 128
+    description: ""
 resources:
   Resources:
     AssetsBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: chatql-frontend
-    # lambdaAccessPolicy:
-    #   Type: "AWS::IAM::Policy"
-    #   Properties:
-    #     PolicyName: "lambda-access"
-    #     PolicyDocument:
-    #       Version: "2012-10-17"
-    #       Statement:
-    #         -
-    #           Effect: "Allow"
-    #           Action: "lambda:InvokeFunction"
-    #           Resource:
-    #             - {"Fn::GetAtt": ["chatqlAiProxyLambdaFunction", "Arn"]}
-    #     Roles:
-    #       -
-    #         Ref: "awsAppSyncServiceRole"
+    lambdaAccessPolicy:
+      Type: "AWS::IAM::Policy"
+      Properties:
+        PolicyName: "lambda-access"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Action: "lambda:InvokeFunction"
+              Resource:
+                - {"Fn::GetAtt": ["ChatqlAiProxyLambdaFunction", "Arn"]}
+        Roles:
+          -
+            Ref: "awsAppSyncServiceRole"
     awsAppSyncServiceRole:
       Type: AWS::IAM::Role
       Properties:
@@ -62,6 +62,7 @@ resources:
               Principal:
                 Service:
                   - "appsync.amazonaws.com"
+                  - "lambda.amazonaws.com"
               Action:
                 - "sts:AssumeRole"
         ManagedPolicyArns:
@@ -70,6 +71,7 @@ resources:
           - arn:aws:iam::aws:policy/ComprehendReadOnly
           - arn:aws:iam::aws:policy/AmazonLexRunBotsOnly
           - arn:aws:iam::aws:policy/TranslateReadOnly
+          - arn:aws:iam::aws:policy/AmazonS3FullAccess
         Policies:
           - PolicyName: lambdaBasicExecution
             PolicyDocument:
@@ -90,9 +92,6 @@ custom:
   appSync:
     name: appsync-serverless
     authenticationType: AWS_IAM
-    # userPoolConfig:
-    #   defaultAction: ALLOW
-    #   userPoolId: us-east-1_78JeU40JR
     schema: swagger_gen_schema.graphql
     dataSources:
       - type: AWS_LAMBDA
@@ -119,11 +118,11 @@ custom:
         field: detectLabels
         request: "invokeBot-request.vtl"
         response: "common-response.vtl"
-      - dataSource: AIproxyLambda
-        type: Query
-        field: dictate
-        request: "dictate-request.vtl"
-        response: "common-response.vtl"
+      # - dataSource: AIproxyLambda
+      #   type: Query
+      #   field: dictate
+      #   request: "dictate-request.vtl"
+      #   response: "common-response.vtl"
       - dataSource: AIproxyLambda
         type: Query
         field: translate
