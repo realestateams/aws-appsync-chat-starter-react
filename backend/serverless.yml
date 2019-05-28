@@ -4,6 +4,12 @@ provider:
   name: aws
   runtime: nodejs8.10
   region: 'eu-west-2'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
 
 package:
   excludeDevDependencies: true
@@ -30,8 +36,31 @@ functions:
     timeout: 3
     memorySize: 128
     description: ""
+  RedirectFunc:
+    handler: redirect-lambda/index.handler
+    role: awsAppSyncServiceRole
+    timeout: 10
+    memorySize: 128
+    description: ""
+    events:
+      - http:
+          path: /redirect-lambda
+          method: get
+          cors: true
 resources:
   Resources:
+    ApiGatewayRestApi:
+      Type: 'AWS::ApiGateway::RestApi'
+      Properties:
+        Name: apigateway-chatql
+        Body:
+          ${file(swaggerdoc.yaml)}
+    ApiGatewayDeployment:
+      Type: AWS::ApiGateway::Deployment
+      Properties:
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        StageName: dev
     AssetsBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -63,6 +92,7 @@ resources:
                 Service:
                   - "appsync.amazonaws.com"
                   - "lambda.amazonaws.com"
+                  - "apigateway.amazonaws.com"
               Action:
                 - "sts:AssumeRole"
         ManagedPolicyArns:
@@ -83,6 +113,23 @@ resources:
                     - logs:CreateLogStream
                     - logs:PutLogEvents
                   Resource: "arn:aws:logs:*:*:*"
+          # - PolicyName: invokeFunctionPolicy
+          #   PolicyDocument:
+          #     Version: '2012-10-17'
+          #     Statement:
+          #       - Effect: Allow
+          #         Action:
+          #           - lambda:InvokeAsync
+          #           - lambda:InvokeFunction
+          #         Resource: "*"
+    RedirectFuncLambdaPermission:
+      Type: AWS::Lambda::Permission
+      DependsOn:
+      - RedirectFuncLambdaFunction
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !Ref RedirectFuncLambdaFunction
+        Principal: apigateway.amazonaws.com
   Outputs:
 custom:
   accountId: { Ref: AWS::AccountId }
