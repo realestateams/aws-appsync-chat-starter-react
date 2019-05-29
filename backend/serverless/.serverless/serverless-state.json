@@ -1,0 +1,3193 @@
+{
+  "service": {
+    "service": "chatql-apsync-backend",
+    "serviceObject": {
+      "name": "chatql-apsync-backend"
+    },
+    "provider": {
+      "stage": "dev",
+      "region": "eu-west-2",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
+      "name": "aws",
+      "runtime": "nodejs8.10",
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "lambda:InvokeFunction",
+            "lambda:InvokeAsync"
+          ],
+          "Resource": "*"
+        }
+      ],
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ChatqlAiProxyLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy"
+            }
+          },
+          "MovieBotLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-MovieBot"
+            }
+          },
+          "ChuckBotLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-ChuckBot"
+            }
+          },
+          "RedirectFuncLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/chatql-apsync-backend-dev-RedirectFunc"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "chatql-apsync-backend",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-MovieBot:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-ChuckBot:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-RedirectFunc:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-chatqlAiProxy:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-MovieBot:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-ChuckBot:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatql-apsync-backend-dev-RedirectFunc:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "chatql-apsync-backend",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "ChatqlAiProxyLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/chatql-apsync-backend/dev/1559116887947-2019-05-29T08:01:27.947Z/chatql-apsync-backend.zip"
+              },
+              "FunctionName": "chatql-apsync-backend-dev-chatqlAiProxy",
+              "Handler": "ai-lambda/index.handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "awsAppSyncServiceRole",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 10
+            },
+            "DependsOn": [
+              "ChatqlAiProxyLogGroup",
+              "awsAppSyncServiceRole"
+            ]
+          },
+          "ChatqlAiProxyLambdaVersion467Cc7kHh0uNfPilojeQQ2JvR06lHpIDvdzurf9o0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ChatqlAiProxyLambdaFunction"
+              },
+              "CodeSha256": "JS0f0P+0atwPgNpD0VjqY7nao+Ti+Db2ccV/YHECG5M="
+            }
+          },
+          "MovieBotLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/chatql-apsync-backend/dev/1559116887947-2019-05-29T08:01:27.947Z/chatql-apsync-backend.zip"
+              },
+              "FunctionName": "chatql-apsync-backend-dev-MovieBot",
+              "Handler": "moviebot-lambda/index.handler",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 3
+            },
+            "DependsOn": [
+              "MovieBotLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "MovieBotLambdaVersionXVL4sVn8bsUVNumaSbkKGNdAvLyXxG9M5vciOUfyQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "MovieBotLambdaFunction"
+              },
+              "CodeSha256": "JS0f0P+0atwPgNpD0VjqY7nao+Ti+Db2ccV/YHECG5M="
+            }
+          },
+          "ChuckBotLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/chatql-apsync-backend/dev/1559116887947-2019-05-29T08:01:27.947Z/chatql-apsync-backend.zip"
+              },
+              "FunctionName": "chatql-apsync-backend-dev-ChuckBot",
+              "Handler": "chuckbot-lambda/index.lambda_handler",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 3
+            },
+            "DependsOn": [
+              "ChuckBotLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "ChuckBotLambdaVersionY4TCnFDlVLHS0D86LAYzsHLWpppd1QwIEJaLbm5YilM": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ChuckBotLambdaFunction"
+              },
+              "CodeSha256": "JS0f0P+0atwPgNpD0VjqY7nao+Ti+Db2ccV/YHECG5M="
+            }
+          },
+          "RedirectFuncLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/chatql-apsync-backend/dev/1559116887947-2019-05-29T08:01:27.947Z/chatql-apsync-backend.zip"
+              },
+              "FunctionName": "chatql-apsync-backend-dev-RedirectFunc",
+              "Handler": "redirect-lambda/index.handler",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "awsAppSyncServiceRole",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 10
+            },
+            "DependsOn": [
+              "RedirectFuncLogGroup",
+              "awsAppSyncServiceRole"
+            ]
+          },
+          "RedirectFuncLambdaVersionAWVAkPVn8gkfeQpB1pxuO5zg65WkXnPXUUZFZ4Wjfs": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "RedirectFuncLambdaFunction"
+              },
+              "CodeSha256": "JS0f0P+0atwPgNpD0VjqY7nao+Ti+Db2ccV/YHECG5M="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "apigateway-chatql",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Body": {
+                "swagger": "2.0",
+                "info": {
+                  "description": "created for graphql generation",
+                  "version": "1.0.0",
+                  "title": "Test Doc"
+                },
+                "tags": [
+                  {
+                    "name": "conversation",
+                    "description": "Everything about your Conversations"
+                  },
+                  {
+                    "name": "message",
+                    "description": "Access to Messages"
+                  },
+                  {
+                    "name": "user",
+                    "description": "Operations about user"
+                  },
+                  {
+                    "name": "ai",
+                    "description": "Operations about AI"
+                  }
+                ],
+                "schemes": [
+                  "http"
+                ],
+                "paths": {
+                  "/conversation": {
+                    "post": {
+                      "tags": [
+                        "conversation"
+                      ],
+                      "summary": "Add a new conversation",
+                      "description": "",
+                      "operationId": "createConvo",
+                      "consumes": [
+                        "application/json"
+                      ],
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "in": "body",
+                          "name": "body",
+                          "description": "Conversation object that needs to be added to the store",
+                          "required": true,
+                          "schema": {
+                            "$ref": "#/definitions/Conversation"
+                          }
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/Conversation"
+                          }
+                        },
+                        "404": {
+                          "description": "Conversation creation failed"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"createConvo\",\n    \"params\": {\n      \"body\": $input.json('$')\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/conversation/{id}": {
+                    "get": {
+                      "tags": [
+                        "conversation"
+                      ],
+                      "summary": "Find conversation",
+                      "description": "Returns a single conversation",
+                      "operationId": "getConvo",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "id",
+                          "in": "path",
+                          "description": "id of conversation",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/Conversation"
+                          }
+                        },
+                        "404": {
+                          "description": "Conversation not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"getConvo\",\n    \"params\": {\n      \"id\": \"$input.params('id')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/message": {
+                    "post": {
+                      "tags": [
+                        "message"
+                      ],
+                      "summary": "Create a message",
+                      "description": "",
+                      "operationId": "createMessage",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "in": "body",
+                          "name": "body",
+                          "description": "create message using the param provided",
+                          "required": true,
+                          "schema": {
+                            "$ref": "#/definitions/Message"
+                          }
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/Message"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid Message"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"createMessage\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/user": {
+                    "post": {
+                      "tags": [
+                        "user"
+                      ],
+                      "summary": "Register user",
+                      "description": "Register user.",
+                      "operationId": "registerUser",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "in": "body",
+                          "name": "body",
+                          "description": "Created user object",
+                          "required": true,
+                          "schema": {
+                            "$ref": "#/definitions/User"
+                          }
+                        }
+                      ],
+                      "responses": {
+                        "default": {
+                          "description": "successful operation"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"createUser\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/user/{id}": {
+                    "get": {
+                      "tags": [
+                        "user"
+                      ],
+                      "summary": "Get user",
+                      "description": "",
+                      "operationId": "getUser",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "id",
+                          "in": "path",
+                          "description": "id of a user",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/User"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid user info supplied"
+                        },
+                        "404": {
+                          "description": "User not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"getUser\",\n    \"params\": {\n      \"id\": \"$input.params('id')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/createConvoLink": {
+                    "post": {
+                      "tags": [
+                        "convoLink"
+                      ],
+                      "summary": "Add a new convoLink",
+                      "description": "",
+                      "operationId": "createConvoLink",
+                      "consumes": [
+                        "application/json"
+                      ],
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "in": "body",
+                          "name": "body",
+                          "description": "ConvoLink object that needs to be added",
+                          "required": true,
+                          "schema": {
+                            "$ref": "#/definitions/ConvoLink"
+                          }
+                        }
+                      ],
+                      "responses": {
+                        "405": {
+                          "description": "Invalid input"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"createConvoLink\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    },
+                    "put": {
+                      "tags": [
+                        "convoLink"
+                      ],
+                      "summary": "Update an existing convoLink",
+                      "description": "",
+                      "operationId": "updateConvoLink",
+                      "consumes": [
+                        "application/json"
+                      ],
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "in": "body",
+                          "name": "body",
+                          "description": "ConvoLink object that needs to be added to the store",
+                          "required": true,
+                          "schema": {
+                            "$ref": "#/definitions/ConvoLink"
+                          }
+                        }
+                      ],
+                      "responses": {
+                        "404": {
+                          "description": "ConvoLink not found"
+                        },
+                        "405": {
+                          "description": "Validation exception"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"updateConvoLink\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/detectCelebs/{bucket}/{key}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Celebs",
+                      "description": "",
+                      "operationId": "detectCelebs",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "bucket",
+                          "in": "path",
+                          "description": "bucket",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "key",
+                          "in": "path",
+                          "description": "key",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"detectCelebs\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/detectLabels/{bucket}/{key}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Labels",
+                      "description": "",
+                      "operationId": "detectLabels",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "bucket",
+                          "in": "path",
+                          "description": "bucket",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "key",
+                          "in": "path",
+                          "description": "key",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"detectLabels\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/detectLanguage/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Language",
+                      "description": "",
+                      "operationId": "detectLanguage",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"detectLanguage\",\n    \"params\": {\n      \"bucket\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/detectEntities/{language}/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Entities",
+                      "description": "",
+                      "operationId": "detectEntities",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "language",
+                          "in": "path",
+                          "description": "language",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"detectEntities\",\n    \"params\": {\n      \"language\": \"$input.params('language')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/detectSentiment/{language}/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Sentiment",
+                      "description": "",
+                      "operationId": "detectSentiment",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "language",
+                          "in": "path",
+                          "description": "language",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"detectSentiment\",\n    \"params\": {\n      \"language\": \"$input.params('language')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/invokeBot/{bot}/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Sentiment",
+                      "description": "",
+                      "operationId": "detectSentiment",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "bot",
+                          "in": "path",
+                          "description": "bot",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"invokeBot\",\n    \"params\": {\n      \"bot\": \"$input.params('bot')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/dictate/{bucket}/{key}/{voice}/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Detect Sentiment",
+                      "description": "",
+                      "operationId": "detectSentiment",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "bucket",
+                          "in": "path",
+                          "description": "bucket",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "key",
+                          "in": "path",
+                          "description": "key",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "voice",
+                          "in": "path",
+                          "description": "voice",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"dictate\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\",\n      \"voice\": \"$input.params('voice')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "/translate/{language}/{text}": {
+                    "get": {
+                      "tags": [
+                        "ai"
+                      ],
+                      "summary": "Translate",
+                      "description": "",
+                      "operationId": "translate",
+                      "produces": [
+                        "application/json"
+                      ],
+                      "parameters": [
+                        {
+                          "name": "language",
+                          "in": "path",
+                          "description": "language",
+                          "required": true,
+                          "type": "string"
+                        },
+                        {
+                          "name": "text",
+                          "in": "path",
+                          "description": "text",
+                          "required": true,
+                          "type": "string"
+                        }
+                      ],
+                      "responses": {
+                        "200": {
+                          "description": "successful operation",
+                          "schema": {
+                            "$ref": "#/definitions/AI"
+                          }
+                        },
+                        "400": {
+                          "description": "Invalid bucket or key is supplied"
+                        },
+                        "404": {
+                          "description": "AI not found"
+                        }
+                      },
+                      "x-amazon-apigateway-integration": {
+                        "type": "aws",
+                        "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                        "httpMethod": "POST",
+                        "requestTemplates": {
+                          "application/json": "{\n    \"fun\" : \"createConvoLink\",\n    \"params\": {\n      \"bucket\": \"$input.params('language')\",\n      \"key\": \"$input.params('text')\"\n    }\n}\n"
+                        },
+                        "responses": {
+                          "default": {
+                            "statusCode": "200"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "parameters": {
+                  "username": {
+                    "name": "username",
+                    "in": "path",
+                    "description": "The name that needs to be fetched. Use user1 for testing.",
+                    "required": true,
+                    "type": "string"
+                  }
+                },
+                "definitions": {
+                  "AI": {
+                    "type": "object",
+                    "properties": {
+                      "bucket": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "bot": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "language": {
+                        "type": "string"
+                      },
+                      "voice": {
+                        "type": "string"
+                      },
+                      "response": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  "User": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "username"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "registered": {
+                        "type": "boolean"
+                      },
+                      "userConversations": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/Conversation"
+                        }
+                      }
+                    }
+                  },
+                  "ConvoLink": {
+                    "type": "object",
+                    "required": [
+                      "id"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "convoLinkUserId": {
+                        "type": "string"
+                      },
+                      "user": {
+                        "$ref": "#/definitions/User"
+                      },
+                      "conversation": {
+                        "$ref": "#/definitions/Conversation"
+                      }
+                    }
+                  },
+                  "S3Object": {
+                    "type": "object",
+                    "required": [
+                      "bucket",
+                      "region",
+                      "key"
+                    ],
+                    "properties": {
+                      "bucket": {
+                        "type": "string"
+                      },
+                      "region": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Conversation": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "messages": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/Message"
+                        }
+                      },
+                      "associatedConverLinkId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Message": {
+                    "type": "object",
+                    "required": [
+                      "id"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "owner": {
+                        "type": "string"
+                      },
+                      "chatbot": {
+                        "type": "boolean"
+                      },
+                      "isSent": {
+                        "type": "boolean"
+                      },
+                      "file": {
+                        "$ref": "#/definitions/S3Object"
+                      },
+                      "conversationId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "ApiResponse": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "ApiGatewayResourceRedirectDashlambda": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "redirect-lambda",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodRedirectDashlambdaOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceRedirectDashlambda"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodRedirectDashlambdaGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceRedirectDashlambda"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "RedirectFuncLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1559116859647": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodRedirectDashlambdaOptions",
+              "ApiGatewayMethodRedirectDashlambdaGet"
+            ]
+          },
+          "RedirectFuncLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "RedirectFuncLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "apigateway.",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ApiGatewayDeployment": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            }
+          },
+          "AssetsBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketName": "chatql-frontend"
+            }
+          },
+          "lambdaAccessPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+              "PolicyName": "lambda-access",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": "lambda:InvokeFunction",
+                    "Resource": [
+                      {
+                        "Fn::GetAtt": [
+                          "ChatqlAiProxyLambdaFunction",
+                          "Arn"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "Roles": [
+                {
+                  "Ref": "awsAppSyncServiceRole"
+                }
+              ]
+            }
+          },
+          "awsAppSyncServiceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com",
+                        "lambda.amazonaws.com",
+                        "apigateway.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/AmazonRekognitionReadOnlyAccess",
+                "arn:aws:iam::aws:policy/AmazonPollyReadOnlyAccess",
+                "arn:aws:iam::aws:policy/ComprehendReadOnly",
+                "arn:aws:iam::aws:policy/AmazonLexRunBotsOnly",
+                "arn:aws:iam::aws:policy/TranslateReadOnly",
+                "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+              ],
+              "Policies": [
+                {
+                  "PolicyName": "lambdaBasicExecution",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogGroup",
+                          "logs:CreateLogStream",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": "arn:aws:logs:*:*:*"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "RedirectFuncLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn": [
+              "RedirectFuncLambdaFunction"
+            ],
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": {
+                "Ref": "RedirectFuncLambdaFunction"
+              },
+              "Principal": "apigateway.amazonaws.com"
+            }
+          },
+          "GraphQlApi": {
+            "Type": "AWS::AppSync::GraphQLApi",
+            "Properties": {
+              "Name": "appsync-serverless",
+              "AuthenticationType": "AWS_IAM"
+            }
+          },
+          "GraphQlSchema": {
+            "Type": "AWS::AppSync::GraphQLSchema",
+            "Properties": {
+              "Definition": "type AI {\n  bucket: String\n  key: String\n  bot: String\n  text: String\n  language: String\n  voice: String\n  response: AI_response\n}\n\ntype AI_response {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype Conversation {\n  id: String!\n  name: String!\n  createdAt: String\n  messages: [Message]\n  associatedConverLinkId: String\n}\n\ninput ConversationInput {\n  id: String!\n  name: String!\n  createdAt: String\n  messages: [MessageInput]\n  associatedConverLinkId: String\n}\n\ninput ConvoLinkInput {\n  id: String!\n  name: String\n  status: String\n  convoLinkUserId: String\n  user: UserInput\n  conversation: ConversationInput\n}\n\ntype createConvo {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype createConvoLink {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype Message {\n  id: String!\n  content: String\n  createdAt: String\n  owner: String\n  chatbot: Boolean\n  isSent: Boolean\n  file: S3Object\n  conversationId: String\n}\n\ninput MessageInput {\n  id: String!\n  content: String\n  createdAt: String\n  owner: String\n  chatbot: Boolean\n  isSent: Boolean\n  file: S3ObjectInput\n  conversationId: String\n}\n\ntype Mutation {\n  createConvo(body: ConversationInput!): createConvo\n  createMessage(body: MessageInput!): Message\n\n  \"\"\"Register user.\"\"\"\n  registerUser(body: UserInput!): registerUser\n  createConvoLink(body: ConvoLinkInput!): createConvoLink\n  updateConvoLink(body: ConvoLinkInput!): updateConvoLink\n}\n\ntype Query {\n  \"\"\"Returns a single conversation\"\"\"\n  getConvo(id: String!): Conversation\n  getUser(id: String!): User\n  detectCelebs(bucket: String!, key: String!): AI\n  detectLabels(bucket: String!, key: String!): AI\n  detectLanguage(text: String!): AI\n  detectEntities(language: String!, text: String!): AI\n  detectSentiment(bucket: String!, key: String!, voice: String!, text: String!): AI\n  translate(language: String!, text: String!): AI\n}\n\ntype registerUser {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype S3Object {\n  bucket: String!\n  region: String!\n  key: String!\n}\n\ninput S3ObjectInput {\n  bucket: String!\n  region: String!\n  key: String!\n}\n\ntype updateConvoLink {\n  \"\"\"default field\"\"\"\n  empty: String\n}\n\ntype User {\n  id: String!\n  username: String!\n  registered: Boolean\n  userConversations: [Conversation]\n}\n\ninput UserInput {\n  id: String!\n  username: String!\n  registered: Boolean\n  userConversations: [ConversationInput]\n}\n\n",
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              }
+            }
+          },
+          "GraphQlDsAIproxyLambdaRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "GraphQlDsAIproxyLambdaPolicy",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Action": [
+                          "lambda:invokeFunction"
+                        ],
+                        "Effect": "Allow",
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "ChatqlAiProxyLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              ":",
+                              [
+                                {
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                },
+                                "*"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GraphQlDsAIproxyLambda": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "AIproxyLambda",
+              "Description": "AIproxy Lambda data source",
+              "Type": "AWS_LAMBDA",
+              "ServiceRoleArn": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambdaRole",
+                  "Arn"
+                ]
+              },
+              "LambdaConfig": {
+                "LambdaFunctionArn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                }
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectLabels": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectLabels",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"lex\",\n        \"arguments\":  {\n            \"bot\": \"$context.arguments.bot\",\n            \"sender\": \"$context.identity.sub\",\n            \"text\": \"$context.arguments.text\"\n        }\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectCelebs": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectCelebs",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"rekognition-celebs\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerytranslate": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "translate",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"translate\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectLanguage": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectLanguage",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-language\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectEntities": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectEntities",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-entities\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerydetectSentiment": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "detectSentiment",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\": \"Invoke\",\n    \"payload\": {\n        \"field\": \"comprehend-sentiment\",\n        \"arguments\":  $utils.toJson($context.args)\n    }\n}",
+              "ResponseMappingTemplate": "$util.toJson($context.result)",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAIproxyLambda",
+                  "Name"
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ChatqlAiProxyLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ChatqlAiProxyLambdaVersion467Cc7kHh0uNfPilojeQQ2JvR06lHpIDvdzurf9o0"
+            }
+          },
+          "MovieBotLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "MovieBotLambdaVersionXVL4sVn8bsUVNumaSbkKGNdAvLyXxG9M5vciOUfyQ"
+            }
+          },
+          "ChuckBotLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ChuckBotLambdaVersionY4TCnFDlVLHS0D86LAYzsHLWpppd1QwIEJaLbm5YilM"
+            }
+          },
+          "RedirectFuncLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "RedirectFuncLambdaVersionAWVAkPVn8gkfeQpB1pxuO5zg65WkXnPXUUZFZ4Wjfs"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            }
+          },
+          "GraphQlApiUrl": {
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApi",
+                "GraphQLUrl"
+              ]
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "accountId": {
+        "Ref": "AWS::AccountId"
+      },
+      "s3Sync": [
+        {
+          "bucketName": "chatql-frontend",
+          "localDir": "../../build"
+        }
+      ],
+      "appSync": {
+        "name": "appsync-serverless",
+        "authenticationType": "AWS_IAM",
+        "schema": "swagger_gen_schema.graphql",
+        "dataSources": [
+          {
+            "type": "AWS_LAMBDA",
+            "name": "AIproxyLambda",
+            "description": "AIproxy Lambda data source",
+            "config": {
+              "lambdaFunctionArn": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAIproxyLambdaRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+              }
+            }
+          }
+        ],
+        "mappingTemplates": [
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLabels",
+            "request": "detectLabels-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectCelebs",
+            "request": "detectCelebs-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLabels",
+            "request": "invokeBot-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "translate",
+            "request": "translate-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectLanguage",
+            "request": "detectLanguage-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectEntities",
+            "request": "detectEntities-request.vtl",
+            "response": "common-response.vtl"
+          },
+          {
+            "dataSource": "AIproxyLambda",
+            "type": "Query",
+            "field": "detectSentiment",
+            "request": "detectSentiment-request.vtl",
+            "response": "common-response.vtl"
+          }
+        ]
+      },
+      "output": {
+        "handler": "scripts/output.handler",
+        "file": "serverless-output.toml"
+      }
+    },
+    "plugins": [
+      "serverless-appsync-plugin",
+      "serverless-s3-sync",
+      "@anttiviljami/serverless-stack-output"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "chatqlAiProxy": {
+        "handler": "ai-lambda/index.handler",
+        "role": "awsAppSyncServiceRole",
+        "timeout": 10,
+        "memorySize": 1024,
+        "description": "",
+        "events": [],
+        "name": "chatql-apsync-backend-dev-chatqlAiProxy",
+        "package": {},
+        "memory": 1024,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
+      "MovieBot": {
+        "handler": "moviebot-lambda/index.handler",
+        "timeout": 3,
+        "memorySize": 128,
+        "description": "",
+        "events": [],
+        "name": "chatql-apsync-backend-dev-MovieBot",
+        "package": {},
+        "memory": 128,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
+      "ChuckBot": {
+        "handler": "chuckbot-lambda/index.lambda_handler",
+        "timeout": 3,
+        "memorySize": 128,
+        "description": "",
+        "events": [],
+        "name": "chatql-apsync-backend-dev-ChuckBot",
+        "package": {},
+        "memory": 128,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
+      "RedirectFunc": {
+        "handler": "redirect-lambda/index.handler",
+        "role": "awsAppSyncServiceRole",
+        "timeout": 10,
+        "memorySize": 128,
+        "description": "",
+        "events": [
+          {
+            "http": {
+              "path": "redirect-lambda",
+              "method": "get",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "chatql-apsync-backend-dev-RedirectFunc",
+        "package": {},
+        "memory": 128,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      }
+    },
+    "resources": {
+      "Resources": {
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "apigateway-chatql",
+            "Body": {
+              "swagger": "2.0",
+              "info": {
+                "description": "created for graphql generation",
+                "version": "1.0.0",
+                "title": "Test Doc"
+              },
+              "tags": [
+                {
+                  "name": "conversation",
+                  "description": "Everything about your Conversations"
+                },
+                {
+                  "name": "message",
+                  "description": "Access to Messages"
+                },
+                {
+                  "name": "user",
+                  "description": "Operations about user"
+                },
+                {
+                  "name": "ai",
+                  "description": "Operations about AI"
+                }
+              ],
+              "schemes": [
+                "http"
+              ],
+              "paths": {
+                "/conversation": {
+                  "post": {
+                    "tags": [
+                      "conversation"
+                    ],
+                    "summary": "Add a new conversation",
+                    "description": "",
+                    "operationId": "createConvo",
+                    "consumes": [
+                      "application/json"
+                    ],
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Conversation object that needs to be added to the store",
+                        "required": true,
+                        "schema": {
+                          "$ref": "#/definitions/Conversation"
+                        }
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/Conversation"
+                        }
+                      },
+                      "404": {
+                        "description": "Conversation creation failed"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"createConvo\",\n    \"params\": {\n      \"body\": $input.json('$')\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/conversation/{id}": {
+                  "get": {
+                    "tags": [
+                      "conversation"
+                    ],
+                    "summary": "Find conversation",
+                    "description": "Returns a single conversation",
+                    "operationId": "getConvo",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of conversation",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/Conversation"
+                        }
+                      },
+                      "404": {
+                        "description": "Conversation not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"getConvo\",\n    \"params\": {\n      \"id\": \"$input.params('id')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/message": {
+                  "post": {
+                    "tags": [
+                      "message"
+                    ],
+                    "summary": "Create a message",
+                    "description": "",
+                    "operationId": "createMessage",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "in": "body",
+                        "name": "body",
+                        "description": "create message using the param provided",
+                        "required": true,
+                        "schema": {
+                          "$ref": "#/definitions/Message"
+                        }
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/Message"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid Message"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"createMessage\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/user": {
+                  "post": {
+                    "tags": [
+                      "user"
+                    ],
+                    "summary": "Register user",
+                    "description": "Register user.",
+                    "operationId": "registerUser",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Created user object",
+                        "required": true,
+                        "schema": {
+                          "$ref": "#/definitions/User"
+                        }
+                      }
+                    ],
+                    "responses": {
+                      "default": {
+                        "description": "successful operation"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"createUser\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/user/{id}": {
+                  "get": {
+                    "tags": [
+                      "user"
+                    ],
+                    "summary": "Get user",
+                    "description": "",
+                    "operationId": "getUser",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of a user",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/User"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid user info supplied"
+                      },
+                      "404": {
+                        "description": "User not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"getUser\",\n    \"params\": {\n      \"id\": \"$input.params('id')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/createConvoLink": {
+                  "post": {
+                    "tags": [
+                      "convoLink"
+                    ],
+                    "summary": "Add a new convoLink",
+                    "description": "",
+                    "operationId": "createConvoLink",
+                    "consumes": [
+                      "application/json"
+                    ],
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "in": "body",
+                        "name": "body",
+                        "description": "ConvoLink object that needs to be added",
+                        "required": true,
+                        "schema": {
+                          "$ref": "#/definitions/ConvoLink"
+                        }
+                      }
+                    ],
+                    "responses": {
+                      "405": {
+                        "description": "Invalid input"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"createConvoLink\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  },
+                  "put": {
+                    "tags": [
+                      "convoLink"
+                    ],
+                    "summary": "Update an existing convoLink",
+                    "description": "",
+                    "operationId": "updateConvoLink",
+                    "consumes": [
+                      "application/json"
+                    ],
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "in": "body",
+                        "name": "body",
+                        "description": "ConvoLink object that needs to be added to the store",
+                        "required": true,
+                        "schema": {
+                          "$ref": "#/definitions/ConvoLink"
+                        }
+                      }
+                    ],
+                    "responses": {
+                      "404": {
+                        "description": "ConvoLink not found"
+                      },
+                      "405": {
+                        "description": "Validation exception"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"updateConvoLink\",\n    \"params\": {\n      \"body\": \"$input.json('$')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/detectCelebs/{bucket}/{key}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Celebs",
+                    "description": "",
+                    "operationId": "detectCelebs",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "bucket",
+                        "in": "path",
+                        "description": "bucket",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "key",
+                        "in": "path",
+                        "description": "key",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"detectCelebs\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/detectLabels/{bucket}/{key}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Labels",
+                    "description": "",
+                    "operationId": "detectLabels",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "bucket",
+                        "in": "path",
+                        "description": "bucket",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "key",
+                        "in": "path",
+                        "description": "key",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"detectLabels\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/detectLanguage/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Language",
+                    "description": "",
+                    "operationId": "detectLanguage",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"detectLanguage\",\n    \"params\": {\n      \"bucket\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/detectEntities/{language}/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Entities",
+                    "description": "",
+                    "operationId": "detectEntities",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "language",
+                        "in": "path",
+                        "description": "language",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"detectEntities\",\n    \"params\": {\n      \"language\": \"$input.params('language')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/detectSentiment/{language}/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Sentiment",
+                    "description": "",
+                    "operationId": "detectSentiment",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "language",
+                        "in": "path",
+                        "description": "language",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"detectSentiment\",\n    \"params\": {\n      \"language\": \"$input.params('language')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/invokeBot/{bot}/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Sentiment",
+                    "description": "",
+                    "operationId": "detectSentiment",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "bot",
+                        "in": "path",
+                        "description": "bot",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"invokeBot\",\n    \"params\": {\n      \"bot\": \"$input.params('bot')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/dictate/{bucket}/{key}/{voice}/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Detect Sentiment",
+                    "description": "",
+                    "operationId": "detectSentiment",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "bucket",
+                        "in": "path",
+                        "description": "bucket",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "key",
+                        "in": "path",
+                        "description": "key",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "voice",
+                        "in": "path",
+                        "description": "voice",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"dictate\",\n    \"params\": {\n      \"bucket\": \"$input.params('bucket')\",\n      \"key\": \"$input.params('key')\",\n      \"voice\": \"$input.params('voice')\",\n      \"text\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                },
+                "/translate/{language}/{text}": {
+                  "get": {
+                    "tags": [
+                      "ai"
+                    ],
+                    "summary": "Translate",
+                    "description": "",
+                    "operationId": "translate",
+                    "produces": [
+                      "application/json"
+                    ],
+                    "parameters": [
+                      {
+                        "name": "language",
+                        "in": "path",
+                        "description": "language",
+                        "required": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "text",
+                        "in": "path",
+                        "description": "text",
+                        "required": true,
+                        "type": "string"
+                      }
+                    ],
+                    "responses": {
+                      "200": {
+                        "description": "successful operation",
+                        "schema": {
+                          "$ref": "#/definitions/AI"
+                        }
+                      },
+                      "400": {
+                        "description": "Invalid bucket or key is supplied"
+                      },
+                      "404": {
+                        "description": "AI not found"
+                      }
+                    },
+                    "x-amazon-apigateway-integration": {
+                      "type": "aws",
+                      "uri": "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations",
+                      "httpMethod": "POST",
+                      "requestTemplates": {
+                        "application/json": "{\n    \"fun\" : \"createConvoLink\",\n    \"params\": {\n      \"bucket\": \"$input.params('language')\",\n      \"key\": \"$input.params('text')\"\n    }\n}\n"
+                      },
+                      "responses": {
+                        "default": {
+                          "statusCode": "200"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "parameters": {
+                "username": {
+                  "name": "username",
+                  "in": "path",
+                  "description": "The name that needs to be fetched. Use user1 for testing.",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "definitions": {
+                "AI": {
+                  "type": "object",
+                  "properties": {
+                    "bucket": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "bot": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "language": {
+                      "type": "string"
+                    },
+                    "voice": {
+                      "type": "string"
+                    },
+                    "response": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "User": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "username"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "registered": {
+                      "type": "boolean"
+                    },
+                    "userConversations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Conversation"
+                      }
+                    }
+                  }
+                },
+                "ConvoLink": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "convoLinkUserId": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "$ref": "#/definitions/User"
+                    },
+                    "conversation": {
+                      "$ref": "#/definitions/Conversation"
+                    }
+                  }
+                },
+                "S3Object": {
+                  "type": "object",
+                  "required": [
+                    "bucket",
+                    "region",
+                    "key"
+                  ],
+                  "properties": {
+                    "bucket": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "Conversation": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Message"
+                      }
+                    },
+                    "associatedConverLinkId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "Message": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "owner": {
+                      "type": "string"
+                    },
+                    "chatbot": {
+                      "type": "boolean"
+                    },
+                    "isSent": {
+                      "type": "boolean"
+                    },
+                    "file": {
+                      "$ref": "#/definitions/S3Object"
+                    },
+                    "conversationId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "ApiResponse": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ApiGatewayDeployment": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "dev"
+          }
+        },
+        "AssetsBucket": {
+          "Type": "AWS::S3::Bucket",
+          "Properties": {
+            "BucketName": "chatql-frontend"
+          }
+        },
+        "lambdaAccessPolicy": {
+          "Type": "AWS::IAM::Policy",
+          "Properties": {
+            "PolicyName": "lambda-access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "lambda:InvokeFunction",
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ChatqlAiProxyLambdaFunction",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "Roles": [
+              {
+                "Ref": "awsAppSyncServiceRole"
+              }
+            ]
+          }
+        },
+        "awsAppSyncServiceRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "appsync.amazonaws.com",
+                      "lambda.amazonaws.com",
+                      "apigateway.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/AmazonRekognitionReadOnlyAccess",
+              "arn:aws:iam::aws:policy/AmazonPollyReadOnlyAccess",
+              "arn:aws:iam::aws:policy/ComprehendReadOnly",
+              "arn:aws:iam::aws:policy/AmazonLexRunBotsOnly",
+              "arn:aws:iam::aws:policy/TranslateReadOnly",
+              "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+            ],
+            "Policies": [
+              {
+                "PolicyName": "lambdaBasicExecution",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": "arn:aws:logs:*:*:*"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "RedirectFuncLambdaPermission": {
+          "Type": "AWS::Lambda::Permission",
+          "DependsOn": [
+            "RedirectFuncLambdaFunction"
+          ],
+          "Properties": {
+            "Action": "lambda:InvokeFunction",
+            "FunctionName": {
+              "Ref": "RedirectFuncLambdaFunction"
+            },
+            "Principal": "apigateway.amazonaws.com"
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "layers": {},
+    "artifact": "/Volumes/Work/Working/craig/aws-appsync-chat-starter-react/backend/serverless/.serverless/chatql-apsync-backend.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/chatql-apsync-backend/dev/1559116887947-2019-05-29T08:01:27.947Z",
+    "artifact": "chatql-apsync-backend.zip"
+  }
+}

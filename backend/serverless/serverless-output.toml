@@ -1,0 +1,7 @@
+GraphQlApiUrl = "https://go7u5q3ckfbdbatu3gh3zajnoy.appsync-api.eu-west-2.amazonaws.com/graphql"
+RedirectFuncLambdaFunctionQualifiedArn = "arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc:43"
+MovieBotLambdaFunctionQualifiedArn = "arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-MovieBot:50"
+ServiceEndpoint = "https://2p1pz97s3g.execute-api.eu-west-2.amazonaws.com/dev"
+ServerlessDeploymentBucketName = "chatql-apsync-backend-de-serverlessdeploymentbuck-18eq1n5bqw6cz"
+ChatqlAiProxyLambdaFunctionQualifiedArn = "arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-chatqlAiProxy:53"
+ChuckBotLambdaFunctionQualifiedArn = "arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-ChuckBot:50"
