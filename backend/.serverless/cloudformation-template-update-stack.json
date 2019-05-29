@@ -149,7 +149,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/chatql-apsync-backend/dev/1559053635717-2019-05-28T14:27:15.717Z/chatql-apsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1559095698175-2019-05-29T02:08:18.175Z/chatql-apsync-backend.zip"
         },
         "FunctionName": "chatql-apsync-backend-dev-chatqlAiProxy",
         "Handler": "ai-lambda/index.handler",
@@ -168,14 +168,14 @@
         "awsAppSyncServiceRole"
       ]
     },
-    "ChatqlAiProxyLambdaVersion0ZIkKVbt2kJvcOOgQgDRyoeyMmk6cxOYWMFW8YY": {
+    "ChatqlAiProxyLambdaVersionC3MbWMw13mMjF18GUUQyuTgPUqsxmOfQYfDenrACIY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ChatqlAiProxyLambdaFunction"
         },
-        "CodeSha256": "pm4CVPp3+EYda0pxIJeZFsMvnVnBl2HEVNIUm5bU/1I="
+        "CodeSha256": "z1Rph207w+82Ojxbs+gKRVCfbzYxHd2XyYwuUl6XKUE="
       }
     },
     "MovieBotLambdaFunction": {
@@ -185,7 +185,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/chatql-apsync-backend/dev/1559053635717-2019-05-28T14:27:15.717Z/chatql-apsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1559095698175-2019-05-29T02:08:18.175Z/chatql-apsync-backend.zip"
         },
         "FunctionName": "chatql-apsync-backend-dev-MovieBot",
         "Handler": "moviebot-lambda/index.handler",
@@ -204,14 +204,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "MovieBotLambdaVersionYB0G5KaneBExV1TdIdx1Bn0PcPPZocq0NysdxTDBSY": {
+    "MovieBotLambdaVersionzOqp6Zgdk7DQpwG6fWCJn5fpsrHx4TuSzV8cdxcbyc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MovieBotLambdaFunction"
         },
-        "CodeSha256": "pm4CVPp3+EYda0pxIJeZFsMvnVnBl2HEVNIUm5bU/1I="
+        "CodeSha256": "z1Rph207w+82Ojxbs+gKRVCfbzYxHd2XyYwuUl6XKUE="
       }
     },
     "ChuckBotLambdaFunction": {
@@ -221,7 +221,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/chatql-apsync-backend/dev/1559053635717-2019-05-28T14:27:15.717Z/chatql-apsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1559095698175-2019-05-29T02:08:18.175Z/chatql-apsync-backend.zip"
         },
         "FunctionName": "chatql-apsync-backend-dev-ChuckBot",
         "Handler": "chuckbot-lambda/index.lambda_handler",
@@ -240,14 +240,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ChuckBotLambdaVersionXHBfSOoWvQq8lsGXWORp19bA8RU1n3Fg97UTIQ9mxU": {
+    "ChuckBotLambdaVersionMPUltpWcbVHGsmSngglCAC67kfliR4XEi4ZyDJlO0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ChuckBotLambdaFunction"
         },
-        "CodeSha256": "pm4CVPp3+EYda0pxIJeZFsMvnVnBl2HEVNIUm5bU/1I="
+        "CodeSha256": "z1Rph207w+82Ojxbs+gKRVCfbzYxHd2XyYwuUl6XKUE="
       }
     },
     "RedirectFuncLambdaFunction": {
@@ -257,7 +257,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/chatql-apsync-backend/dev/1559053635717-2019-05-28T14:27:15.717Z/chatql-apsync-backend.zip"
+          "S3Key": "serverless/chatql-apsync-backend/dev/1559095698175-2019-05-29T02:08:18.175Z/chatql-apsync-backend.zip"
         },
         "FunctionName": "chatql-apsync-backend-dev-RedirectFunc",
         "Handler": "redirect-lambda/index.handler",
@@ -276,14 +276,14 @@
         "awsAppSyncServiceRole"
       ]
     },
-    "RedirectFuncLambdaVersionBAn9UikrsZIk35a16ryN0Xd8eiK7ECCJDj7mlFmec": {
+    "RedirectFuncLambdaVersionjiPoeBQIkjFttnf9gAOdBn0US6pvTx2Xidmr9jlw0cU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "RedirectFuncLambdaFunction"
         },
-        "CodeSha256": "pm4CVPp3+EYda0pxIJeZFsMvnVnBl2HEVNIUm5bU/1I="
+        "CodeSha256": "z1Rph207w+82Ojxbs+gKRVCfbzYxHd2XyYwuUl6XKUE="
       }
     },
     "ApiGatewayRestApi": {
@@ -1388,7 +1388,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1559053616971": {
+    "ApiGatewayDeployment1559095650515": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1802,25 +1802,25 @@
     "ChatqlAiProxyLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChatqlAiProxyLambdaVersion0ZIkKVbt2kJvcOOgQgDRyoeyMmk6cxOYWMFW8YY"
+        "Ref": "ChatqlAiProxyLambdaVersionC3MbWMw13mMjF18GUUQyuTgPUqsxmOfQYfDenrACIY"
       }
     },
     "MovieBotLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MovieBotLambdaVersionYB0G5KaneBExV1TdIdx1Bn0PcPPZocq0NysdxTDBSY"
+        "Ref": "MovieBotLambdaVersionzOqp6Zgdk7DQpwG6fWCJn5fpsrHx4TuSzV8cdxcbyc"
       }
     },
     "ChuckBotLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChuckBotLambdaVersionXHBfSOoWvQq8lsGXWORp19bA8RU1n3Fg97UTIQ9mxU"
+        "Ref": "ChuckBotLambdaVersionMPUltpWcbVHGsmSngglCAC67kfliR4XEi4ZyDJlO0"
       }
     },
     "RedirectFuncLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "RedirectFuncLambdaVersionBAn9UikrsZIk35a16ryN0Xd8eiK7ECCJDj7mlFmec"
+        "Ref": "RedirectFuncLambdaVersionjiPoeBQIkjFttnf9gAOdBn0US6pvTx2Xidmr9jlw0cU"
       }
     },
     "ServiceEndpoint": {
