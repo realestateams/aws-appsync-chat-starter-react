@@ -25,9 +25,7 @@ paths:
       operationId: createConvo
       consumes:
       - application/json
-      - application/xml
       produces:
-      - application/xml
       - application/json
       parameters:
       - in: body
@@ -37,12 +35,28 @@ paths:
         schema:
           "$ref": "#/definitions/Conversation"
       responses:
-        '405':
-          description: Invalid input
-      security:
-      - user_auth:
-        - write:messages
-        - write:messages
+        '200':
+          description: successful operation
+          schema:
+            "$ref": "#/definitions/Conversation"
+        '404':
+          description: Conversation creation failed
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "createConvo",
+                "params": {
+                  "body": $input.json('$')
+                }
+            }
+        responses:
+          default:
+            statusCode: "200"
+  "/conversation/{id}":
     get:
       tags:
       - conversation
@@ -50,15 +64,13 @@ paths:
       description: Returns a single conversation
       operationId: getConvo
       produces:
-      - application/xml
       - application/json
       parameters:
-      - in: body
-        name: body
-        description: conversation filter param to return
+      - name: id
+        in: path
+        description: id of conversation
         required: true
-        schema:
-          "$ref": "#/definitions/Conversation"
+        type: string
       responses:
         '200':
           description: successful operation
@@ -66,8 +78,21 @@ paths:
             "$ref": "#/definitions/Conversation"
         '404':
           description: Conversation not found
-      security:
-      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates:
+          'application/json': >
+            {
+                "fun" : "getConvo",
+                "params": {
+                  "id": "$input.params('id')"
+                }
+            }
+        responses:
+          default:
+            statusCode: "200"
   "/message":
     post:
       tags:
@@ -76,7 +101,6 @@ paths:
       description: ''
       operationId: createMessage
       produces:
-      - application/xml
       - application/json
       parameters:
       - in: body
@@ -92,6 +116,21 @@ paths:
             "$ref": "#/definitions/Message"
         '400':
           description: Invalid Message
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "createMessage",
+                "params": {
+                  "body": "$input.json('$')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/user":
     post:
       tags:
@@ -100,7 +139,6 @@ paths:
       description: Register user.
       operationId: registerUser
       produces:
-      - application/xml
       - application/json
       parameters:
       - in: body
@@ -111,7 +149,25 @@ paths:
           "$ref": "#/definitions/User"
       responses:
         default:
+          schema:
+            "$ref": "#/definitions/User"
           description: successful operation
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "createUser",
+                "params": {
+                  "body": "$input.json('$')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
+  "/user/{id}":
     get:
       tags:
       - user
@@ -119,14 +175,13 @@ paths:
       description: ''
       operationId: getUser
       produces:
-      - application/xml
       - application/json
       parameters:
-      - in: body
-        name: body
-        description: user object
-        schema:
-          "$ref": "#/definitions/User"
+      - name: id
+        in: path
+        description: id of a user
+        required: true
+        type: string
       responses:
         '200':
           description: successful operation
@@ -136,6 +191,21 @@ paths:
           description: Invalid user info supplied
         '404':
           description: User not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "getUser",
+                "params": {
+                  "id": "$input.params('id')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/createConvoLink":
     post:
       tags:
@@ -145,9 +215,7 @@ paths:
       operationId: createConvoLink
       consumes:
       - application/json
-      - application/xml
       produces:
-      - application/xml
       - application/json
       parameters:
       - in: body
@@ -159,10 +227,21 @@ paths:
       responses:
         '405':
           description: Invalid input
-      security:
-      - user_auth:
-        - write:messages
-        - read:messages
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "createConvoLink",
+                "params": {
+                  "body": "$input.json('$')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
     put:
       tags:
       - convoLink
@@ -171,9 +250,7 @@ paths:
       operationId: updateConvoLink
       consumes:
       - application/json
-      - application/xml
       produces:
-      - application/xml
       - application/json
       parameters:
       - in: body
@@ -187,10 +264,21 @@ paths:
           description: ConvoLink not found
         '405':
           description: Validation exception
-      security:
-      - user_auth:
-        - write:messages
-        - read:messages
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "updateConvoLink",
+                "params": {
+                  "body": "$input.json('$')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/detectCelebs/{bucket}/{key}":
     get:
       tags:
@@ -199,7 +287,6 @@ paths:
       description: ''
       operationId: detectCelebs
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: bucket
@@ -221,6 +308,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "detectCelebs",
+                "params": {
+                  "bucket": "$input.params('bucket')",
+                  "key": "$input.params('key')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/detectLabels/{bucket}/{key}":
     get:
       tags:
@@ -229,7 +332,6 @@ paths:
       description: ''
       operationId: detectLabels
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: bucket
@@ -251,6 +353,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "detectLabels",
+                "params": {
+                  "bucket": "$input.params('bucket')",
+                  "key": "$input.params('key')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/detectLanguage/{text}":
     get:
       tags:
@@ -259,7 +377,6 @@ paths:
       description: ''
       operationId: detectLanguage
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: text
@@ -276,6 +393,21 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "detectLanguage",
+                "params": {
+                  "bucket": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/detectEntities/{language}/{text}":
     get:
       tags:
@@ -284,7 +416,6 @@ paths:
       description: ''
       operationId: detectEntities
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: language
@@ -306,6 +437,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "detectEntities",
+                "params": {
+                  "language": "$input.params('language')",
+                  "text": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/detectSentiment/{language}/{text}":
     get:
       tags:
@@ -314,7 +461,6 @@ paths:
       description: ''
       operationId: detectSentiment
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: language
@@ -336,6 +482,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "detectSentiment",
+                "params": {
+                  "language": "$input.params('language')",
+                  "text": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/invokeBot/{bot}/{text}":
     get:
       tags:
@@ -344,7 +506,6 @@ paths:
       description: ''
       operationId: detectSentiment
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: bot
@@ -366,6 +527,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "invokeBot",
+                "params": {
+                  "bot": "$input.params('bot')",
+                  "text": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/dictate/{bucket}/{key}/{voice}/{text}":
     get:
       tags:
@@ -374,7 +551,6 @@ paths:
       description: ''
       operationId: detectSentiment
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: bucket
@@ -406,6 +582,24 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "dictate",
+                "params": {
+                  "bucket": "$input.params('bucket')",
+                  "key": "$input.params('key')",
+                  "voice": "$input.params('voice')",
+                  "text": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
   "/translate/{language}/{text}":
     get:
       tags:
@@ -414,7 +608,6 @@ paths:
       description: ''
       operationId: translate
       produces:
-      - application/xml
       - application/json
       parameters:
       - name: language
@@ -436,18 +629,22 @@ paths:
           description: Invalid bucket or key is supplied
         '404':
           description: AI not found
-securityDefinitions:
-  user_auth:
-    type: oauth2
-    authorizationUrl: http://user.auth.io
-    flow: implicit
-    scopes:
-      write:messages: create/modify messages in your account
-      read:messages: read your messages
-  api_key:
-    type: apiKey
-    name: api_key
-    in: header
+      x-amazon-apigateway-integration:
+        type: "aws"
+        uri: "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:180951574562:function:chatql-apsync-backend-dev-RedirectFunc/invocations"
+        httpMethod: "POST"
+        requestTemplates: 
+          'application/json': >
+            {
+                "fun" : "createConvoLink",
+                "params": {
+                  "bucket": "$input.params('language')",
+                  "key": "$input.params('text')"
+                }
+            }
+        responses: 
+          default:
+            statusCode: "200"
 parameters:
   username:
     name: username
@@ -473,8 +670,6 @@ definitions:
         type: string
       response:
         type: object
-    xml:
-      name: AI
   User:
     type: object
     required:
@@ -482,42 +677,32 @@ definitions:
     - username
     properties:
       id:
-        type: integer
-        format: int64
+        type: string
       username:
         type: string
       registered:
         type: boolean
       userConversations:
         type: array
-        xml:
-          name: conversation
-          wrapped: true
         items:
           "$ref": "#/definitions/Conversation"
-    xml:
-      name: User
   ConvoLink:
     type: object
     required:
     - id
     properties:
       id:
-        type: integer
-        format: int64
+        type: string
       name:
         type: string
       status:
         type: string
       convoLinkUserId:
-        type: integer
-        format: int64
+        type: string
       user:
         "$ref": "#/definitions/User"
       conversation:
         "$ref": "#/definitions/Conversation"
-    xml:
-      name: Tag
   S3Object:
     type: object
     required:
@@ -531,8 +716,6 @@ definitions:
         type: string
       key:
         type: string
-    xml:
-      name: S3Object
   Conversation:
     type: object
     required:
@@ -540,55 +723,38 @@ definitions:
     - name
     properties:
       id:
-        type: integer
-        format: int64
+        type: string
       name:
         type: string
-        example: conversation between craig and me
       createdAt:
         type: string
-        example: 2019-5-12
       messages:
         type: array
-        xml:
-          name: message
-          wrapped: true
         items:
           "$ref": "#/definitions/Message"
-      associated:
-        "$ref": "#/definitions/ConvoLink"
-    xml:
-      name: Conversation
+      associatedConverLinkId:
+        type: string
   Message:
     type: object
     required:
     - id
     properties:
       id:
-        type: integer
-        format: int64
+        type: string
       content:
         type: string
-        example: hello
       createdAt:
         type: string
-        example: 2019-5-12
       owner:
         type: string
-        example: eugen-steffen
       chatbot:
         type: boolean
       isSent: 
         type: boolean
       file: 
         "$ref": "#/definitions/S3Object"
-      messageConversationId: 
-        type: integer
-        format: int64
-      conversation: 
-        "$ref": "#/definitions/Conversation"
-    xml:
-      name: Pet
+      conversationId: 
+        type: string
   ApiResponse:
     type: object
     properties:

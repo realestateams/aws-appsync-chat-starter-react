@@ -53,16 +53,23 @@ exports.handler = async (event) => {
           mutation: query,
           variables: params
         })
+        console.log('success:', result);
+        return {
+          success: true
+        }
       } else {
         result = await client.query({
           query,
           variables: params
         });
+        console.log('success:', result);
+        return result.data[event.fun];
       }
-      console.log('success:', result);
-      return result;
     } catch (err) {
       console.log('error:', err);
-      return err;
+      return {
+        success: false,
+        err
+      };
     }
 };

@@ -41,31 +41,36 @@ const queriesAndMutations = {"getConvo":"query GetConvo($id: String!){getConvo(i
 "createConvo":"mutation CreateConvo($body: ConversationInput!){createConvo(body: $body) {empty}}","createMessage":"mutation CreateMessage($body: MessageInput!){createMessage(body: $body) {id content createdAt owner chatbot isSent file{bucket region key} conversationId}}","registerUser":"mutation RegisterUser($body: UserInput!){registerUser(body: $body) {empty}}","createConvoLink":"mutation CreateConvoLink($body: ConvoLinkInput!){createConvoLink(body: $body) {empty}}","updateConvoLink":"mutation UpdateConvoLink($body: ConvoLinkInput!){updateConvoLink(body: $body) {empty}}"};
 
 exports.handler = async (event) => {
-    console.log('event -------', JSON.stringify(event))
-    let qm = queriesAndMutations[event.fun];
-  
-    let query = gql(qm);
-    let params = event.params;
-    let result;
+  console.log('event -------', JSON.stringify(event))
+  let qm = queriesAndMutations[event.fun];
 
-    try {
-      if (qm.indexOf('mutation') === 0) {
-        result = await client.mutate({
-          mutation: query,
-          variables: params
-        })
-      } else {
-        result = await client.query({
-          query,
-          variables: params
-        });
-      }
+  let query = gql(qm);
+  let params = event.params;
+  let result;
+
+  try {
+    if (qm.indexOf('mutation') === 0) {
+      result = await client.mutate({
+        mutation: query,
+        variables: params
+      })
       console.log('success:', result);
-      console.log('success:', JSON.stringify(result));
-      return result;
-    } catch (err) {
-      console.log('error:', err);
-      console.log('error:', JSON.stringify(err));
-      return err;
+      return {
+        success: true
+      }
+    } else {
+      result = await client.query({
+        query,
+        variables: params
+      });
+      console.log('success:', result);
+      return result.data[event.fun];
     }
+  } catch (err) {
+    console.log('error:', err);
+    return {
+      success: false,
+      err
+    };
+  }
 };

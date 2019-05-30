@@ -100,10 +100,6 @@
   max-width: 100%;
   max-height: 300px; }
 
-nav a {
-  margin-left: 30px;
-}
-
 @media (max-width: 768px) {
   .msg-image {
     max-height: 200px !important; } }
