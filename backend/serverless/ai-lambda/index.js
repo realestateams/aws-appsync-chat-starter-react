@@ -205,7 +205,7 @@ function send2S3(data, key, bucket) {
       console.log(response);
     })
     .send();
-  //return url;
+  return url;
 }
 
 function getUrl(key, bucket) {
@@ -214,6 +214,7 @@ function getUrl(key, bucket) {
     Key: key + ".mp3"
   };
   let url = s3.getSignedUrl("getObject", params);
+  // let url = 'aaa';
   console.log("File " + params.Key + " saved to S3");
   return url;
 }

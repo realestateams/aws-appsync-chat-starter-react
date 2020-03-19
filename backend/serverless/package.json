@@ -1,0 +1,12 @@
+{
+  "name": "redirect-lambda-packages",
+  "version": "0.1.0",
+  "dependencies": {
+    "aws-appsync": "^1.8.0",
+    "aws-sdk": "^2.464.0",
+    "graphql-tag": "^2.10.1",
+    "isomorphic-fetch": "^2.2.1",
+    "process": "^0.11.10"
+  },
+  "devDependencies": {}
+}

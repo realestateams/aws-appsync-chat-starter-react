@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 import './App.css'
 import Amplify, { Auth } from 'aws-amplify'
@@ -53,4 +54,33 @@ const WithProvider = () => (
   </ApolloProvider>
 )
 
-export default withAuthenticator(WithProvider)
+const AppComponent = withAuthenticator(WithProvider)
+
+class DocComponent extends React.Component {
+  componentWillMount() {
+    document.getElementById('redoc').style.display = 'block';
+  }
+  componentWillUnmount() {
+    document.getElementById('redoc').style.display = 'none';
+  }
+  render() {
+    return <div>
+    </div>
+  }
+}
+
+const AppRouter = () => (
+  <Router>
+    <div>
+      <nav>
+        <Link to='/'>Chat App</Link>
+        <Link to='/doc/' style={{marginLeft: '30px'}}>Doc</Link>
+      </nav>
+
+      <Route path='/' exact component={AppComponent} />
+      <Route path='/doc/' component={DocComponent} />
+    </div>
+  </Router>
+)
+
+export default AppRouter

@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@anttiviljami/serverless-stack-output": "^0.3.1",
     "aws-amplify": "1.1.9",
     "aws-amplify-react": "2.0.5",
     "aws-appsync": "1.3.4",
     "aws-appsync-react": "1.1.4",
+    "aws-sdk": "^2.463.0",
     "bootstrap": "^4.1.3",
     "downshift": "^2.2.3",
     "graphql-tag": "^2.9.2",
@@ -14,6 +16,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
     "moment": "^2.22.2",
+    "node-fetch": "^2.6.0",
     "node-sass-chokidar": "^1.3.3",
     "react": "^16.5.2",
     "react-apollo": "2.2.4",
@@ -21,6 +24,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-d3-cloud": "^0.6.0",
     "react-dom": "^16.5.2",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.1",
     "react-sizeme": "^2.5.2",
     "react-sound": "^1.2.0",
@@ -29,6 +33,8 @@
     "react-tiny-popover": "^3.4.2",
     "reactstrap": "^6.4.0",
     "rxjs": "^6.3.3",
+    "serverless-appsync-plugin": "^1.1.1",
+    "serverless-s3-sync": "^1.8.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

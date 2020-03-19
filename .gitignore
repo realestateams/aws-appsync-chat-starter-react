@@ -7,6 +7,10 @@ amplify/backend/amplify-meta.json
 aws-exports.js
 awsconfiguration.json
 
+backend/serverless/.serverless
+backend/terraform/.terraform
+backend/terraform/terraform.tfstate*
+
 .graphqlconfig.yml
 packaged.yaml
 
